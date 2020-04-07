@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Mundo Hogar</title>
+    <link rel="icon" href="img/logo.png">
+    <link rel="stylesheet" href="css/core-style.css">
+    <link rel="stylesheet" href="css/animacionfotos.css">
+    <script src="js/jquery/jquery-2.2.4.min.js"></script>
+    <script src="js/vue.js"></script>
+    <script src="js/axios.min.js"></script>    
+</head>
+<body>
+    <header class="header_area">
+        <div class="classy-nav-container breakpoint-off d-flex align-items-center justify-content-between">
+            <nav class="classy-navbar" id="essenceNav" style="background: #2C3E50;">
+                <a class="nav-brand" style="cursor: pointer;" onclick="inicio()"><img src="img/logo.png" style="width: 75px;height: 50px;" alt=""></a>
+                <div class="classy-navbar-toggler">
+                    <span class="navbarToggler"><span></span><span></span><span></span></span>
+                </div>
+                <div class="classy-menu">
+                    <div class="classycloseIcon">
+                        <div class="cross-wrap"><span class="top"></span><span class="bottom"></span></div>
+                    </div>
+                    <div class="classynav">
+                        <ul>
+                            <li><a style="cursor: pointer;" onclick="inicio()" id="opcion1">Inicio</a></li>
+                            <li><a style="cursor: pointer;" onclick="somos()" id="opcion1">Quienes Somos</a></li>
+                            <li><a href="#" id="opcion1">Tienda</a>
+                                <ul class="dropdown">
+                                    <li><a style="cursor: pointer;" onclick="sofa()" id="opcion2">Sofa</a></li>
+                                    <li><a style="cursor: pointer;" onclick="cama()" id="opcion2">Cama</a></li>
+                                    <li><a style="cursor: pointer;" onclick="comedor()" id="opcion2">Comedor</a></li>
+                                    <li><a style="cursor: pointer;" onclick="mueble()" id="opcion2">Mueble</a></li>
+                                    <li><a style="cursor: pointer;" onclick="ambiente()" id="opcion2">Ambientes</a></li>
+                                    <li><a style="cursor: pointer;" onclick="oferta()" id="opcion2">Ofertas</a></li>
+                                    <li><a style="cursor: pointer;" onclick="vertodo()" id="opcion2">Ver Todo</a></li>
+                                </ul>
+                            </li>
+                            <li><a style="cursor: pointer;" onclick="contactanos()" id="opcion1">Contactanos</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            <div class="header-meta d-flex clearfix justify-content-end" style="background: #2C3E50;">
+                <div class="search-area">
+                    <form>
+                        <input type="search" name="search" id="headerSearch" style="background: #2C3E50;color: white;" placeholder="Busqueda">
+                        <button type="button" onclick="buscador()" style="cursor: pointer;"><i class="fa fa-search" aria-hidden="true"></i></button>
+                    </form>
+                </div>
+                <div class="cart-area">
+                    <a style="cursor: pointer;color: white;font-size: 20px;" id="essenceCartBtn"><i class="fa fa-shopping-cart" aria-hidden="true"></i> <span id="totalitemscar"></span></a>
+                </div>
+            </div>
+            <script>
+                function buscador() {
+                    busqueda=document.getElementById("headerSearch").value;
+                    $('#cuerpo').load('ventanas/tienda/buscador.html');
+                }
+            </script>
+        </div>
+    </header>
+    <div class="right-side-cart-area">
+        <div class="cart-button">
+            <a style="cursor: pointer;color: white;font-size: 20px;background: #2C3E50;" id="rightSideCart"><i class="fa fa-shopping-cart" aria-hidden="true"></i> <span id="totalitemscar1"></span></a>
+        </div>
+
+        <div class="cart-content d-flex" id="vuecarrito">
+            <div class="cart-list" style="width: 25%;background-color: #2C3E50;">
+                <div v-for="carrito in todo">
+                    <div class="single-cart-item mb-2" v-for="items in articuloscarrito" v-if="carrito.id == items && items != 'nulo'">
+                        <a style="cursor: pointer;" @click="f1(carrito.id,carrito.nombre,carrito.foto,carrito.hover,carrito.categoria,carrito.precio,carrito.preciodescuento,carrito.descripcion)" class="product-image">
+                            <img v-bind:src="carrito.foto" style="width: 100%;height: 150px;" class="cart-thumb" alt="">
+                            <div class="cart-item-desc">
+                                <span class="product-remove" style="cursor: pointer;" @click="quitarcarrito(items)"><i class="fa fa-close" aria-hidden="true"></i></span>
+                                <span class="badge">{{carrito.categoria}}</span>
+                                <h6>{{carrito.nombre}}</h6>
+                                <p v-if="carrito.oferta == 'Si' && carrito.descuento > 0" class="price">Bs {{carrito.preciodescuento}}</p>
+                                <p v-else class="price">Bs {{carrito.precio}}</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+
+            <div class="cart-amount-summary">
+                <h2>Total</h2>
+                <ul class="summary-table">
+                    <li><span>Monto:</span> <span>Bs {{this.montocarrito}}</span></li>
+                    <li><span>Envio:</span> <span>Gratis</span></li>
+                    <li><span>Total:</span> <span>Bs {{this.totalcarrito}}</span></li>
+                </ul>
+                <div class="checkout-btn mt-100">
+                    <a style="cursor: pointer;" @click="pagarcarrito" class="btn essence-btn">Realizar Pago</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('#cuerpo').load('ventanas/inicio.html');
+        });
+        function inicio() {
+            $('#cuerpo').load('ventanas/inicio.html');
+            if ($('contactanos').is(":visible")) {
+
+            }
+            else {
+                $('#contactanos').fadeIn(100);
+            }
+        }
+        function vertodo() {
+            $('#cuerpo').load('ventanas/tienda/todo.html');
+        }
+        function sofa() {
+            $('#cuerpo').load('ventanas/tienda/sofa.html');
+        }
+        function cama() {
+            $('#cuerpo').load('ventanas/tienda/cama.html');
+        }
+        function comedor() {
+            $('#cuerpo').load('ventanas/tienda/comedor.html');
+        }
+        function mueble() {
+            $('#cuerpo').load('ventanas/tienda/mueble.html');
+        }
+        function ambiente() {
+            $('#cuerpo').load('ventanas/tienda/ambiente.html');
+        }
+        function oferta() {
+            $('#cuerpo').load('ventanas/tienda/oferta.html');
+        }
+        function somos() {
+            $('#cuerpo').load('ventanas/quienessomos.html');
+            if ($('contactanos').is(":visible")) {
+
+            }
+            else {
+                $('#contactanos').fadeIn(100);
+            }
+        }
+        function contactanos() {
+            $('#contactanos').fadeOut(100);
+            $('#cuerpo').load('ventanas/contactanos.html');
+        }
+        function cerrarredes() {
+            $('#flotanteinicio').fadeOut(100);
+        }
+    </script>
+    <center>
+        <div id="flotanteinicio" style="width: 100%;height: 100%;position: fixed;background-color: white;z-index: 10000000000;">
+            <div class="row">
+                <div class="col-md-12">
+                    <a style="cursor: pointer;float: right;font-size: 40px;" onclick="cerrarredes()"><i class="fa fa-times-circle" aria-hidden="true"></i></a>
+                    <h4>Nuestras Redes Sociales</h4>
+                    <div style="width:20%;display: flex;justify-content: center;align-items: center;display: inline-block;z-index: 10000000000;">
+                        <a href="https://www.facebook.com/muhogar/"><img src="img/fb.png" style="width:100%;z-index: 10000000000;" alt=""></a>
+                    </div>
+                    <div style="width:20%;display: flex;justify-content: center;align-items: center;display: inline-block;">
+                        <a href="https://twitter.com/login?lang=es"><img src="img/tw.png" style="width:100%;z-index: 10000000000;" alt=""></a>
+                    </div>
+                    <div style="width:20%;display: flex;justify-content: center;align-items: center;display: inline-block;">
+                        <a href="https://www.instagram.com/?hl=es-la"><img src="img/in.png" style="width:100%;z-index: 10000000000;" alt=""></a>
+                    </div>
+                    <div style="width:20%;display: flex;justify-content: center;align-items: center;display: inline-block;">
+                        <a href="https://api.whatsapp.com/send?phone=59163446080&text=Buenas Tardes Mundo Hogar."><img src="img/wp.png" style="width:100%;z-index: 10000000000;" alt=""></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </center>
+    <div id="cuerpo">
+    </div>
+    <div class="brands-area d-flex align-items-center justify-content-between" style="background:#e30116;" style="background:#e30116;">        
+        <div class="single-brands-logo">
+            <img src="img/marcas/mk.jpg" alt="">
+        </div>
+        <h4 style="position: absolute;z-index:100000;margin-top: -80px;text-align: center;">Estas marcas nos abalan.</h4>
+        <div class="single-brands-logo">
+            <img src="img/marcas/samsung.png" alt="">
+        </div>
+        <div class="single-brands-logo">
+            <img src="img/marcas/inti.jpeg" alt="">
+        </div>
+        <div class="single-brands-logo">
+            <img src="img/marcas/multicenter.png" alt="">
+        </div>
+        <div class="single-brands-logo">
+            <img src="img/marcas/dismac.png" alt="">
+        </div>
+        <div class="single-brands-logo">
+            <img src="img/marcas/makita.png" alt="">
+        </div>
+    </div>
+    <footer class="footer_area clearfix" style="background: #2C3E50;">
+        <div class="col-md-12" id="contactanos">
+            <div class="col-md-5">
+                <div class="col-md-6" style="float: left;">
+                    <a href="#"><img src="img/logo.png" style="width: 100px;height: auto;" alt=""></a>
+                </div>
+                <div class="col-md-6" style="float: right;">
+                    <div class="footer_social_area">
+                        <a href="https://www.facebook.com/muhogar/" data-toggle="tooltip" data-placement="top" title="Facebook" style="font-size: 18px;color: white;"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+                        <a href="https://www.instagram.com/mundo_hogarr/?igshid=wl841kz4eijk" data-toggle="tooltip" data-placement="top" title="Instagram" style="font-size: 18px;color: white;"><i class="fa fa-instagram" aria-hidden="true"></i></a>
+                        <a href="https://twitter.com/login?lang=es" data-toggle="tooltip" data-placement="top" title="Twitter" style="font-size: 18px;color: white;"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-6" style="float: left;">
+                    <div class="single_widget_area">
+                        <div class="footer_social_area">
+                            <p style="color: white;"><b><i class="fa fa-map-marker" aria-hidden="true"></i> Ubicacion: </b>Calle J Prudencio Bustillos 679 Ciudad Sucre, Chuquisaca, Bolivia.</p>
+                            <p style="color: white;"><b><i class="fa fa-mobile" aria-hidden="true"></i> Telefono: </b>+591 68420829</p>
+                            <p style="color: white;"><b><i class="fa fa-phone" aria-hidden="true"></i> Celular: </b>3 332 260</p>
+                        </div>
+                        <a href="https://api.whatsapp.com/send?phone=59163446080&text=Buenas Tardes Mundo Hogar." style="font-size: 15px;color: green;" data-toggle="tooltip" data-placement="top" title="Whatsapp"><i class="fa fa-whatsapp" aria-hidden="true"></i> Whatsapp</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6" style="float: right;">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3771.5762792781547!2d-65.25053086259273!3d-19.038384099876385!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x93fbc8d2f41ff781%3A0xecc58130f7813c16!2sMundo%20Hogar!5e0!3m2!1ses-419!2sbo!4v1586028193103!5m2!1ses-419!2sbo" width="100%" height="200" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+            </div>
+        </div>
+    <div id="chatapp">
+        <div style="position: fixed;margin-bottom: 0;z-index: 10000000;bottom: 0;float: left;">
+            <img src="img/chat.png" style="width: 50px;height: 50px;border-radius: 50%;cursor: pointer;" @click="chat" alt="">
+        </div>
+        <div class="chatclass" id="chatmh">
+            <div class="cabezerachat">
+                <div class="cabdiv1">
+                    <div class="itemscabezera">
+                        <img src="img/logo.png" style="width:100%;" alt="">
+                    </div>
+                    <div class="itemscabezera1">
+                        <h6 style="color: white;">Mundo Hogar</h6>
+                    </div>
+                </div>
+                <div class="cabdiv2">
+                    <a @click="chat" style="font-size: 25px;color: white;cursor: pointer;"><i class="fa fa-times-circle" aria-hidden="true"></i></a>
+                </div>
+            </div>
+            <div class="cuerpochat">
+                <ul v-for="chat in mensajes">
+                    <div class="d-flex justify-content-end mb-4">
+                        <div class="msgchat">
+                            <p style="font-size: 12px;">{{chat}}</p>
+                        </div>
+                        <div class="imgmsg">
+                            <img src="img/logo.png" class="userimgmsg">
+                        </div>
+                    </div>    
+                </ul>
+            </div>
+            <div class="inputchat">
+                <div class="chatop1">
+                    <input type="text" class="form-control" placeholder="Enviar" name="" id="">
+                </div>
+                <div class="chatop2">
+                    <button class="btn btn-success ml-1" style="font-size: 20px;"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+        .userimgmsg{
+			height: 45px;
+			width: 45px;
+		}
+        .imgmsg{
+            height: 40px;
+            width: 40px;
+            margin-top: 20px;
+        }
+        .msgchat{
+            margin-top: 20px;
+            margin-bottom: auto;
+            margin-right: 20px;
+            margin-left: 10px;
+            border-radius: 20px;
+            background-color: #78e08f;
+            padding: 5px;
+            position: relative;
+        }
+        .chatclass{
+            position: fixed;
+            margin-bottom: 0;
+            z-index: 100000000;
+            bottom: 0;
+            float: left;
+            display: none;
+            width: 25%;
+            height: 60%;
+            background-color: #9c9c9c;
+        }
+        .cabdiv1{
+            width: 80%;
+            height: 100%;
+            float: left;
+            display: flex;
+            justify-content: left;
+            align-items: center;
+        }
+        .cabdiv2{
+            width: 18%;
+            height: 100%;
+            float:right;
+            display: flex;
+            justify-content: right;
+            align-items: center;
+        }
+        .cabezerachat{
+            height: 10%;
+            background-color: #2C3E50;
+        }
+        .cabezerachat .itemscabezera{
+            width: 20%;
+            float: left;
+        }
+        .cabezerachat .itemscabezer1{
+            width: 40%;
+            float: left;
+        }
+        .cuerpochat{
+            width: 100%;
+            height: 80%;
+        }
+        .inputchat{
+            width: 100%;
+            height: 10%;
+        }
+        .chatop1{
+            float: left;
+            width: 85%;
+        }
+        .chatop2{
+            float: right;
+            width: 15%;
+        }
+        @media screen and (max-width: 991px) {
+            .chatclass{
+                width: 100%;
+                height: 88%;
+            }
+        }
+    </style>
+        <div class="col-md-12" style="float: right;">
+            <div class="row mt-5">
+                <div class="col-md-12 text-center">
+                    <p style="color: white;">
+                        
+    Copyright Mundo Hogar&copy;<script>document.write(new Date().getFullYear());</script> <a href="login/" target="_blank">System</a>
+    
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="js/jquery/jquery-2.2.4.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/plugins.js"></script>
+    <script src="js/classy-nav.min.js"></script>
+    <script src="js/active.js"></script>
+    <script type="text/javascript">
+    var respuestabusquedas=["Comedor1","Comedor2","Mesa 2p","Cuna","Escritorio","Sofa Filadelfia",
+    "Sofa Chicago","Sofa de Cuero","Sofa San Diego","Sofa Firenze","Mesa 2p Porcelana","Mesa 2p Cristal",
+    "Mueble Tv","Mueble Tv Bromelia","Armario","Repisa Empotrada Puerta de Cristal","Repisa Empotrada sin Puerta",
+    "Repisa 4 Puertas","Ropero de Vidrio","Ropero 5 Puertas","Ropero 6 Puertas","Sofa Picazo 2p","Sofa Malaga",
+    "Sofa Bogota","Sofa Picazo 1p","Sofa de Pluma","Sofa de Cuero de Puma","Somier 2 Plazas","Ambiente","Ambiente1",
+    "Ambiente2","Ambiente3","Ambiente4","Ambiente5"];
+    var idrespuestabusquedas=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33];
+    var preciorespuestabusquedas=[1000,1200,800,2300,1900,2400,2300,2100,2200,2700,950,800,900,1900,600,900,400,800,1200,
+    2400,3000,2000,2100,1750,700,900,800,1450,4500,7950,9000,10000,11500,12250];
+    var descuentorespuestabusquedas=[0,0,0,0,0,0,0,0,0,0,0,0,0,1600,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+    var fotosrespuestabusquedas=["img/inventario/comedor.jpg","img/inventario/comedor1.jpg","img/inventario/comedortrasparente.jpg","img/inventario/cuna.jpg",
+    "img/inventario/escritorio.jpg","img/inventario/jeugodesofa3.png","img/inventario/jeugodesofa4.png","img/inventario/juegodesofa.jpg",
+    "img/inventario/juegodesofa1.png","img/inventario/juegodesofa2.png","img/inventario/mesa2.jpg","img/inventario/mesa21.jpg","img/inventario/muebledetv.jpg",
+    "img/inventario/muebletv.jpg","img/inventario/repisa1.png","img/inventario/repisaempotrada.png","img/inventario/repisaempotrada2.png","img/inventario/repisamueble.png",
+    "img/inventario/roperito.jpg","img/inventario/ropero.jpg","img/inventario/ropero1.jpg","img/inventario/sofa.jpg","img/inventario/sofa1.jpg",
+    "img/inventario/sofabogota.jpg","img/inventario/sofachico.jpg","img/inventario/sofases1.jpg","img/inventario/sofasolo.jpg","img/inventario/somier.jpg",
+    "img/inventario/propuesta.jpg","img/inventario/res.jpg","img/inventario/res1.jpg","img/inventario/res2.jpg","img/inventario/res4.jpg","img/inventario/res5.jpg",];
+    var busqueda="";
+    var imghovervar="img/inventario/imghover.png";
+    var descripciondeitem="La descripcion del producto estara aqui.";
+    var categoriasrespuestbusquedas=["Comedor","Comedor","Comedor","Camas","Escritorio","Sofa","Sofa","Sofa","Sofa","Sofa",
+    "Comedor","Comedor","Muebles","Muebles","Muebles","Muebles","Muebles","Muebles","Muebles","Muebles","Muebles","Sofa",
+    "Sofa","Sofa","Sofa","Sofa","Sofa","Camas","Ambientes","Ambientes","Ambientes","Ambientes","Ambientes","Ambientes"];
+    var idaver=0;
+    var nombre="";
+    var categoria="";
+    var descripcion="";
+    var vectoridcarrito=[];
+    var vectorpreciocarrito=[];
+    var totalitemcarrito=0;
+    var foto1="";
+    var foto2="";
+    var precio=0;
+    var preciodescuento=0;
+    var mtcarrito=0;
+    var controlcarrito = 1;
+        let chatapp = new Vue({
+          el: '#chatapp',
+          data: {
+            veri:0,
+            mensajes:["Buenas noches gracias por comunicarse con nosotros.","En que le podemos ayudar?"]
+          },
+          methods: {
+            chat: function () {
+                if (this.veri==0) {
+                    $('#chatmh').slideDown(200);
+                    this.veri=1;
+                }else{
+                    $('#chatmh').slideUp(200);
+                    this.veri=0;
+                }
+            }
+          },
+        });
+
+        let vuecarrito = new Vue({
+            el: '#vuecarrito',
+            data: {
+                articuloscarrito:[],
+                todo:[],
+                montocarrito:0,
+                totalcarrito:0,
+            },
+            methods: {
+                quitarcarrito: function (a) {
+                    var verificar=0;
+                    for (let i = vectoridcarrito.length -1; i >= 0; i--) {
+                        if (vectoridcarrito[i] == a && verificar == 0) {
+                            var removed = vectoridcarrito.splice(i, 1);
+                            verificar=1;
+                            var removed = vectorpreciocarrito.splice(i, 1);
+                        }
+                    }
+                    totalitemcarrito=totalitemcarrito-1;
+                    this.articuloscarrito=vectoridcarrito;
+                    this.precioscar();
+                    document.querySelector("#totalitemscar").innerHTML = totalitemcarrito;
+                    document.querySelector("#totalitemscar1").innerHTML = totalitemcarrito;
+                },
+                f1: function (a,b,c,d,e,f,g,h) {
+                    idaver=a;
+                    nombre=b;
+                    categoria=e;
+                    descripcion=h;
+                    foto1=c;
+                    foto2=d;
+                    precio=f;
+                    preciodescuento=g;
+                    $('#cuerpo').load('ventanas/producto.html');
+                },
+                precioscar:function () {
+                    var suma=0;
+                    for (let i = 0; i < vectorpreciocarrito.length; i++) {
+                        suma=suma+vectorpreciocarrito[i];
+                    }
+                    this.montocarrito=suma;
+                    this.totalcarrito=suma;
+                    mtcarrito=suma;
+                },
+                pagarcarrito: function () {
+                    $('#cuerpo').load('ventanas/tienda/pago.html');
+                },
+                guardaralcarrito: function () {
+                    document.querySelector("#totalitemscar").innerHTML = totalitemcarrito;
+                    document.querySelector("#totalitemscar1").innerHTML = totalitemcarrito;
+                    this.precioscar();
+                    this.articuloscarrito=vectoridcarrito;
+                }
+            },
+            mounted () {
+                axios.get('json/todos.json').then(response => {
+                        this.todo = response.data
+                    }).catch(error => {
+                        console.log(error)
+                        this.errored = true
+                    }).finally(() => this.loading = false);
+            },
+        });
+      </script>
+      <script>
+        document.querySelector("#totalitemscar").innerHTML = totalitemcarrito;
+        setInterval(function(){ 
+            if (controlcarrito !=0) {
+                $(document).ready(function(){
+                    vuecarrito.guardaralcarrito();
+                });
+                document.vuecarrito.guardaralcarrito();
+                controlcarrito=0;
+            }
+        }, 3000);
+        var rangojs1=0;
+        var rangojs2=0;
+        setInterval(function(){ 
+            rangojs1=document.getElementById("minimoid").value;
+            rangojs2=document.getElementById("maximoid").value;
+            document.querySelector("#cantirange1").innerHTML = rangojs1;
+            document.querySelector("#cantirange2").innerHTML = rangojs2;
+        }, 10);
+      </script>
+</body>
+</html>
